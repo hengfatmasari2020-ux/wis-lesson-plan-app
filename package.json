@@ -1,0 +1,16 @@
+{
+  "name": "wis-lesson-plan-app",
+  "version": "1.0.0",
+  "description": "WIS English Department lesson plan generator (Grades 1-12) producing branded .docx files.",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "docx": "^9.1.1",
+    "express": "^4.21.2"
+  }
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WIS Lesson Plan Generator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand-mark">WIS</span>
+    <div class="brand-text">
+      <strong>Western International School</strong>
+      <span>English Department &mdash; Lesson Plan Generator</span>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <form id="lesson-form" novalidate>
+    <p class="intro">
+      Pick a grade and fill in the lesson details below. The app automatically detects
+      whether the lesson fits a PPP or 5E structure from your teaching strategy, then
+      builds a fully timed, branded Word lesson plan and offers it as a download.
+    </p>
+
+    <div id="grade-note" class="note" hidden></div>
+
+    <div class="field">
+      <label for="grade">Grade</label>
+      <select id="grade" name="grade" required>
+        <option value="" disabled selected>Select a grade&hellip;</option>
+        <optgroup label="Grades 1-2 &mdash; Cambridge Global English">
+          <option value="1">Grade 1 (Stage 2)</option>
+          <option value="2">Grade 2 (Stage 3)</option>
+        </optgroup>
+        <optgroup label="Grades 3-5 &mdash; Cambridge Global English">
+          <option value="3">Grade 3 (Stage 4)</option>
+          <option value="4">Grade 4 (Stage 5)</option>
+          <option value="5">Grade 5 (Stage 6)</option>
+        </optgroup>
+        <optgroup label="Grades 6-8 &mdash; Cambridge Global English">
+          <option value="6">Grade 6 (Stage 7)</option>
+          <option value="7">Grade 7 (Stage 8)</option>
+          <option value="8">Grade 8 (Stage 9)</option>
+        </optgroup>
+        <optgroup label="Grades 9-10 &mdash; Cambridge IGCSE ESL (0510/0511)">
+          <option value="9">Grade 9</option>
+          <option value="10">Grade 10</option>
+        </optgroup>
+        <optgroup label="Grades 11-12 &mdash; Cambridge AS &amp; A Level (9093)">
+          <option value="11">Grade 11 (AS, Paper 1/2)</option>
+          <option value="12">Grade 12 (A Level, Paper 3/4)</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="topic">Unit / lesson topic</label>
+      <input type="text" id="topic" name="topic" required placeholder="e.g. Unit 1: Sports and Free Time">
+    </div>
+
+    <div class="field">
+      <label for="resources">Related resources and teacher guide</label>
+      <textarea id="resources" name="resources" rows="3" placeholder="Coursebook pages, texts, links, materials"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="strategy">Recommended teaching strategy</label>
+      <input type="text" id="strategy" name="strategy" placeholder="e.g. Guided elicitation and controlled practice">
+      <div id="framework-note" class="note" hidden></div>
+    </div>
+
+    <div class="field">
+      <label for="objectives">Cambridge Learning Objectives</label>
+      <textarea id="objectives" name="objectives" rows="3" required></textarea>
+    </div>
+
+    <div class="field">
+      <label for="criteria">Success Criteria</label>
+      <textarea id="criteria" name="criteria" rows="3" required></textarea>
+    </div>
+
+    <fieldset class="field diff-group">
+      <legend>Differentiation</legend>
+      <div class="diff-grid">
+        <div>
+          <label for="diff-support">Support</label>
+          <textarea id="diff-support" name="diff-support" rows="2"></textarea>
+        </div>
+        <div>
+          <label for="diff-core">Core</label>
+          <textarea id="diff-core" name="diff-core" rows="2"></textarea>
+        </div>
+        <div>
+          <label for="diff-challenge">Challenge</label>
+          <textarea id="diff-challenge" name="diff-challenge" rows="2"></textarea>
+        </div>
+      </div>
+    </fieldset>
+
+    <div id="form-errors" class="errors" hidden></div>
+
+    <button type="submit" id="submit-btn">Generate lesson plan (.docx)</button>
+  </form>
+</main>
+
+<footer class="page-footer">
+  Western International School &middot; English Department &middot; Grades 1&ndash;12
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
