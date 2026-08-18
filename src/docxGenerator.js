@@ -28,7 +28,7 @@ function headingCell(text, width, opts = {}) {
     shading: { type: ShadingType.CLEAR, fill: NAVY },
     verticalAlign: VerticalAlign.CENTER,
     children: [new Paragraph({
-      children: [new TextRun({ text, bold: true, color: WHITE, size: 19 })]
+      children: [new TextRun({ text, bold: true, color: WHITE })]
     })]
   });
 }
@@ -42,7 +42,7 @@ function cell(text, width, opts = {}) {
     verticalAlign: VerticalAlign.CENTER,
     children: lines.map((l, i) => new Paragraph({
       spacing: { after: 60 },
-      children: [new TextRun({ text: l, size: 18, bold: !!opts.bold && i === 0 })]
+      children: [new TextRun({ text: l, bold: !!opts.bold && i === 0 })]
     }))
   });
 }
@@ -54,8 +54,8 @@ function labelValueCell(label, value, width, opts = {}) {
     shading: opts.shade ? { type: ShadingType.CLEAR, fill: LIGHTGOLD } : undefined,
     verticalAlign: VerticalAlign.CENTER,
     children: [
-      new Paragraph({ spacing: { after: 30 }, children: [new TextRun({ text: label, bold: true, size: 17, color: NAVY })] }),
-      new Paragraph({ children: [new TextRun({ text: value, size: 18 })] })
+      new Paragraph({ spacing: { after: 30 }, children: [new TextRun({ text: label, bold: true, color: NAVY })] }),
+      new Paragraph({ children: [new TextRun({ text: value })] })
     ]
   });
 }
@@ -63,7 +63,7 @@ function labelValueCell(label, value, width, opts = {}) {
 function sectionHeading(text) {
   return new Paragraph({
     spacing: { before: 220, after: 100 },
-    children: [new TextRun({ text, bold: true, color: NAVY, size: 24 })]
+    children: [new TextRun({ text, bold: true, color: NAVY })]
   });
 }
 
@@ -197,7 +197,7 @@ function generateLessonPlanDocx(inputs) {
       border: { bottom: { style: BorderStyle.SINGLE, size: 12, color: GOLD, space: 6 } },
       spacing: { after: 120 },
       children: [
-        new TextRun({ text: "Western International School  |  English Department", bold: true, color: NAVY, size: 18 })
+        new TextRun({ text: "Western International School  |  English Department", bold: true, color: NAVY })
       ]
     }),
     new Paragraph({
@@ -209,7 +209,7 @@ function generateLessonPlanDocx(inputs) {
       spacing: { after: 200 },
       children: [new TextRun({
         text: `Grade ${grade} | Framework: ${framework.fullName} | Target Talk Ratio: TTT ${talk.ttt}% / STT ${talk.stt}% (whole-lesson target)`,
-        italics: true, color: NAVY, size: 20
+        italics: true, color: NAVY
       })]
     }),
 
@@ -218,15 +218,15 @@ function generateLessonPlanDocx(inputs) {
 
     sectionHeading("2. Measurable Learning Objectives (SWBAT)"),
     new Paragraph({ spacing: { after: 80 }, children: [
-      new TextRun({ text: `By the end of this ${talk.minutes}-minute lesson, Students Will Be Able To (SWBAT):`, size: 19, italics: true, color: NAVY })
+      new TextRun({ text: `By the end of this ${talk.minutes}-minute lesson, Students Will Be Able To (SWBAT):`, italics: true, color: NAVY })
     ]}),
     new Paragraph({ spacing: { after: 40 }, children: [
-      new TextRun({ text: "Learning Objectives: ", bold: true, size: 19, color: NAVY }),
-      new TextRun({ text: objectives, size: 19 })
+      new TextRun({ text: "Learning Objectives: ", bold: true, color: NAVY }),
+      new TextRun({ text: objectives })
     ]}),
     new Paragraph({ spacing: { after: 160 }, children: [
-      new TextRun({ text: "Success Criteria: ", bold: true, size: 19, color: NAVY }),
-      new TextRun({ text: criteria, size: 19 })
+      new TextRun({ text: "Success Criteria: ", bold: true, color: NAVY }),
+      new TextRun({ text: criteria })
     ]}),
 
     sectionHeading("3. Procedural Execution Plan"),
@@ -242,12 +242,19 @@ function generateLessonPlanDocx(inputs) {
       spacing: { before: 200 },
       border: { top: { style: BorderStyle.SINGLE, size: 8, color: GOLD, space: 6 } },
       children: [
-        new TextRun({ text: `Total lesson time: ${talk.minutes} minutes (${framework.fullName}).`, size: 18, color: NAVY })
+        new TextRun({ text: `Total lesson time: ${talk.minutes} minutes (${framework.fullName}).`, color: NAVY })
       ]
     })
   ];
 
   const doc = new Document({
+    styles: {
+      default: {
+        document: {
+          run: { font: "Calibri", size: 24 } // 12pt body text throughout
+        }
+      }
+    },
     sections: [{
       properties: {
         page: {
