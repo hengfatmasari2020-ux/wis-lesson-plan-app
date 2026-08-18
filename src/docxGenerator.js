@@ -19,7 +19,8 @@ const GOLD = "C9A84C";
 const WHITE = "FFFFFF";
 const LIGHTGOLD = "F5EFDD";
 
-const TABLE_WIDTH = 14440;
+// A4 landscape, usable width after 700 DXA margins each side (16838 - 1400).
+const TABLE_WIDTH = 15438;
 
 function headingCell(text, width, opts = {}) {
   return new TableCell({
@@ -77,7 +78,7 @@ function todayISO() {
 }
 
 function buildMetadataTable(grade, subtitle, topic, date, minutes, framework, rationale, strategy, resources) {
-  const W = [3610, 3610, 3610, 3610];
+  const W = [3859, 3859, 3860, 3860];
   return new Table({
     width: { size: TABLE_WIDTH, type: WidthType.DXA },
     columnWidths: W,
@@ -105,7 +106,7 @@ function buildMetadataTable(grade, subtitle, topic, date, minutes, framework, ra
 }
 
 function buildProceduralTable(framework, inputs) {
-  const W = [1700, 1700, 1500, 3480, 3480, 2580];
+  const W = [1818, 1818, 1604, 3720, 3721, 2757];
   const headerRow = new TableRow({
     tableHeader: true,
     children: [
@@ -141,7 +142,7 @@ function buildProceduralTable(framework, inputs) {
 }
 
 function buildDifferentiationTable(differentiation) {
-  const W = [3610, 10830];
+  const W = [3860, 11578];
   const tiers = [
     ["Tier 1: Emerging / Support", differentiation.support || "No support-tier notes supplied."],
     ["Tier 2: Target / Core", differentiation.core || "No core-tier notes supplied."],
@@ -160,7 +161,7 @@ function buildDifferentiationTable(differentiation) {
 }
 
 function buildAuditTable() {
-  const W = [3200, 5620, 5620];
+  const W = [3421, 6008, 6009];
   const headerRow = new TableRow({
     tableHeader: true,
     children: [
@@ -258,7 +259,8 @@ function generateLessonPlanDocx(inputs) {
     sections: [{
       properties: {
         page: {
-          size: { width: 15840, height: 12240, orientation: PageOrientation.LANDSCAPE },
+          // A4 portrait dimensions (11906 x 16838 DXA); docx swaps them for LANDSCAPE.
+          size: { width: 11906, height: 16838, orientation: PageOrientation.LANDSCAPE },
           margin: { top: 700, bottom: 700, left: 700, right: 700 }
         }
       },
