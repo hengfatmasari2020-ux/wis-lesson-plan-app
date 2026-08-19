@@ -5,17 +5,88 @@ const strategyInput = document.getElementById("strategy");
 const frameworkNote = document.getElementById("framework-note");
 const errorsBox = document.getElementById("form-errors");
 const submitBtn = document.getElementById("submit-btn");
-const resourcesTextarea = document.getElementById("resources");
-const resourceFilesInput = document.getElementById("resource-files");
+const materialUpload = document.getElementById("material-upload");
+const uploadStatus = document.getElementById("upload-status");
 
-resourceFilesInput.addEventListener("change", () => {
-  const names = Array.from(resourceFilesInput.files).map((f) => f.name);
-  if (!names.length) return;
-  const line = `Attached files: ${names.join(", ")}`;
-  resourcesTextarea.value = resourcesTextarea.value.trim()
-    ? `${resourcesTextarea.value.trim()}\n${line}`
-    : line;
-  resourceFilesInput.value = "";
+const FIELD_IDS = {
+  topic: "topic",
+  resources: "resources",
+  strategy: "strategy",
+  objectives: "objectives",
+  criteria: "criteria"
+};
+const DIFF_FIELD_IDS = { support: "diff-support", core: "diff-core", challenge: "diff-challenge" };
+const FIELD_LABELS = {
+  topic: "Unit / lesson topic",
+  resources: "Resources",
+  strategy: "Teaching strategy",
+  objectives: "Learning Objectives",
+  criteria: "Success Criteria",
+  differentiation: "Differentiation"
+};
+
+materialUpload.addEventListener("change", async () => {
+  const file = materialUpload.files[0];
+  if (!file) return;
+
+  uploadStatus.hidden = false;
+  uploadStatus.textContent = `Reading ${file.name}…`;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const res = await fetch("/api/extract-resources", { method: "POST", body: formData });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Could not read that file.");
+
+    const filled = [];
+    const skipped = [];
+    const notFound = [];
+
+    for (const [field, elId] of Object.entries(FIELD_IDS)) {
+      const el = document.getElementById(elId);
+      const value = (data[field] || "").trim();
+      if (!value) {
+        if (field !== "resources" || !el.value.trim()) notFound.push(FIELD_LABELS[field]);
+        continue;
+      }
+      if (el.value.trim()) {
+        skipped.push(FIELD_LABELS[field]);
+      } else {
+        el.value = value;
+        filled.push(`${FIELD_LABELS[field]} (${data.sources[field]})`);
+      }
+    }
+
+    const diff = data.differentiation || {};
+    let diffFilled = false;
+    for (const [tier, elId] of Object.entries(DIFF_FIELD_IDS)) {
+      const el = document.getElementById(elId);
+      const value = (diff[tier] || "").trim();
+      if (!value) continue;
+      if (el.value.trim()) {
+        if (!skipped.includes(FIELD_LABELS.differentiation)) skipped.push(FIELD_LABELS.differentiation);
+      } else {
+        el.value = value;
+        diffFilled = true;
+      }
+    }
+    if (diffFilled) filled.push(`Differentiation (${data.sources.differentiation})`);
+    else if (!diff.support && !diff.core && !diff.challenge) notFound.push(FIELD_LABELS.differentiation);
+
+    if (strategyInput.value) detectFramework();
+
+    const parts = [];
+    if (filled.length) parts.push(`Filled: ${filled.join(", ")}.`);
+    if (skipped.length) parts.push(`Left as-is (already had content): ${skipped.join(", ")}.`);
+    if (notFound.length) parts.push(`Not found${data.aiAvailable ? "" : " (AI extraction not configured on this server)"}: ${notFound.join(", ")}.`);
+    uploadStatus.textContent = parts.length ? parts.join(" ") : "Nothing usable was found in that file.";
+  } catch (err) {
+    uploadStatus.textContent = `Could not extract from that file: ${err.message}`;
+  } finally {
+    materialUpload.value = "";
+  }
 });
 
 gradeSelect.addEventListener("change", async () => {

@@ -122,6 +122,22 @@ input[type="file"] {
   color: var(--grey);
 }
 
+.upload-section {
+  border: 1px dashed var(--gold);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: var(--lightgold);
+}
+
+.upload-section input[type="file"] {
+  margin-top: 4px;
+}
+
+#upload-status {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
 textarea { resize: vertical; }
 
 .diff-group {

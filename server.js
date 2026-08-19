@@ -1,12 +1,23 @@
 const express = require("express");
 const path = require("path");
+const multer = require("multer");
 const { generateLessonPlanDocx } = require("./src/docxGenerator");
 const { getGradeMeta } = require("./src/frameworks");
 const { detectFramework } = require("./src/frameworkDetector");
 const { FRAMEWORKS, weightedTalkRatio } = require("./src/lessonStages");
+const { extractResourcesFromFile } = require("./src/extractResources");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 15 * 1024 * 1024 }, // 15MB
+  fileFilter: (req, file, cb) => {
+    const ok = /\.(pptx|docx|pdf)$/i.test(file.originalname);
+    cb(ok ? null : new Error("Only .pptx, .docx, or .pdf files are supported."), ok);
+  }
+});
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
@@ -34,6 +45,23 @@ app.post("/api/detect-framework", (req, res) => {
     rationale: detected.rationale,
     ttt: talk.ttt,
     stt: talk.stt
+  });
+});
+
+// Extracts lesson-plan field suggestions from an uploaded slide deck, Word
+// document, or PDF. The uploaded file is processed in memory only and never
+// written to disk or stored.
+app.post("/api/extract-resources", (req, res) => {
+  upload.single("file")(req, res, async (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+    if (!req.file) return res.status(400).json({ error: "No file uploaded." });
+
+    try {
+      const result = await extractResourcesFromFile(req.file.buffer, req.file.originalname, req.file.mimetype);
+      res.json(result);
+    } catch (extractErr) {
+      res.status(400).json({ error: extractErr.message });
+    }
   });
 });
 
