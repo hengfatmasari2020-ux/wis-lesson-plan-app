@@ -1,13 +1,12 @@
 // Free, deterministic extraction tuned to the WIS teacher's-guide slide
-// script format: "TEACHER SAYS:", "TEACHER DOES:", "STUDENTS DO:", and
-// "DIFFERENTIATION - Support: ... | Core: ... | Challenge: ...".
+// script format: "TEACHER SAYS:", "TEACHER DOES:", "STUDENTS DO:", etc.
 //
 // Only the fields that can be found reliably by label-matching are filled in
-// here (topic, resources, differentiation). Objectives, success criteria and
-// teaching strategy require understanding free-flowing prose scattered across
-// slide text boxes with no fixed order, which regex cannot do reliably — those
-// are left for the AI fallback (see aiExtractor.js) when this parser can't
-// find them.
+// here (topic, resources). Differentiation is always typed in by the teacher,
+// never auto-filled. Objectives, success criteria and teaching strategy
+// require understanding free-flowing prose scattered across slide text boxes
+// with no fixed order, which regex cannot do reliably — those are left for
+// the AI fallback (see aiExtractor.js) when this parser can't find them.
 
 function collectAllText(extracted) {
   if (extracted.kind === "pptx") {
@@ -54,39 +53,16 @@ function extractResources(extracted) {
   return unique.length ? unique.join(", ") + "." : null;
 }
 
-function extractDifferentiation(extracted) {
-  const text = collectAllText(extracted);
-  const pattern = /DIFFERENTIATION\s*-\s*Support:\s*(.*?)\s*\|\s*Core:\s*(.*?)\s*\|\s*Challenge:\s*(.*?)(?:\n|$)/gis;
-  const support = [];
-  const core = [];
-  const challenge = [];
-  let match;
-  while ((match = pattern.exec(text)) !== null) {
-    support.push(match[1].trim());
-    core.push(match[2].trim());
-    challenge.push(match[3].trim());
-  }
-  if (!support.length) return null;
-  return {
-    support: dedupeCaseInsensitive(support).join("\n"),
-    core: dedupeCaseInsensitive(core).join("\n"),
-    challenge: dedupeCaseInsensitive(challenge).join("\n")
-  };
-}
-
 function parse(extracted) {
   const topic = extractTopic(extracted);
   const resources = extractResources(extracted);
-  const differentiation = extractDifferentiation(extracted);
 
   return {
     topic,
     resources,
-    differentiation,
     found: {
       topic: !!topic,
       resources: !!resources,
-      differentiation: !!differentiation,
       strategy: false,
       objectives: false,
       criteria: false

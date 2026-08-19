@@ -15,14 +15,12 @@ const FIELD_IDS = {
   objectives: "objectives",
   criteria: "criteria"
 };
-const DIFF_FIELD_IDS = { support: "diff-support", core: "diff-core", challenge: "diff-challenge" };
 const FIELD_LABELS = {
   topic: "Unit / lesson topic",
   resources: "Resources",
   strategy: "Teaching strategy",
   objectives: "Learning Objectives",
-  criteria: "Success Criteria",
-  differentiation: "Differentiation"
+  criteria: "Success Criteria"
 };
 
 materialUpload.addEventListener("change", async () => {
@@ -58,22 +56,6 @@ materialUpload.addEventListener("change", async () => {
         filled.push(`${FIELD_LABELS[field]} (${data.sources[field]})`);
       }
     }
-
-    const diff = data.differentiation || {};
-    let diffFilled = false;
-    for (const [tier, elId] of Object.entries(DIFF_FIELD_IDS)) {
-      const el = document.getElementById(elId);
-      const value = (diff[tier] || "").trim();
-      if (!value) continue;
-      if (el.value.trim()) {
-        if (!skipped.includes(FIELD_LABELS.differentiation)) skipped.push(FIELD_LABELS.differentiation);
-      } else {
-        el.value = value;
-        diffFilled = true;
-      }
-    }
-    if (diffFilled) filled.push(`Differentiation (${data.sources.differentiation})`);
-    else if (!diff.support && !diff.core && !diff.challenge) notFound.push(FIELD_LABELS.differentiation);
 
     if (strategyInput.value) detectFramework();
 

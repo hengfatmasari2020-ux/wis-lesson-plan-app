@@ -45,8 +45,10 @@ Then open http://localhost:3000. Set a different port with `PORT=5000 npm start`
   TTT-Reduction checklist.
 - `POST /api/extract-resources` — accepts an uploaded .pptx/.docx/.pdf
   (processed in memory only, never stored) and returns suggested values for
-  the six form fields, so a teacher can upload their slides/guide instead of
-  typing everything by hand:
+  topic, resources, strategy, objectives, and criteria, so a teacher can
+  upload their slides/guide instead of typing everything by hand.
+  Differentiation is never extracted; teachers always type Support/Core/
+  Challenge in themselves.
   - `src/fileExtractor.js` — pulls plain text out of the file. PPTX slide
     notes are extracted separately from slide body text, since notes are
     continuous prose (a teacher script) and parse far more reliably than
@@ -54,10 +56,9 @@ Then open http://localhost:3000. Set a different port with `PORT=5000 npm start`
     guaranteed reading order.
   - `src/ruleBasedParser.js` — free, deterministic extraction tuned to the
     WIS teacher's-guide script format ("TEACHER SAYS:", "TEACHER DOES:",
-    "STUDENTS DO:", "DIFFERENTIATION - Support: ... | Core: ... |
-    Challenge: ..."). Finds topic, resources, and differentiation reliably;
-    cannot reliably find objectives/criteria/strategy since those are free
-    prose with no fixed label.
+    "STUDENTS DO:"). Finds topic and resources reliably; cannot reliably
+    find objectives/criteria/strategy since those are free prose with no
+    fixed label.
   - `src/aiExtractor.js` — only called for fields the rules didn't find, and
     only if `ANTHROPIC_API_KEY` is set (see below). No-ops otherwise, so the
     app still works on rule-based extraction alone without a key.
@@ -69,9 +70,9 @@ Then open http://localhost:3000. Set a different port with `PORT=5000 npm start`
 
 ### Enabling AI-assisted extraction (optional)
 
-Without any setup, uploads still extract topic/resources/differentiation via
-the free rule-based parser. To also auto-fill teaching strategy, objectives,
-and success criteria from messier or differently-formatted files, add an
+Without any setup, uploads still extract topic/resources via the free
+rule-based parser. To also auto-fill teaching strategy, objectives, and
+success criteria from messier or differently-formatted files, add an
 Anthropic API key:
 
 1. Get a key from [console.anthropic.com](https://console.anthropic.com)

@@ -28,10 +28,9 @@ Rules:
 - "objectives" should state what students will learn or be able to do, drawn from the source's own stated objectives.
 - "criteria" should be checkable "I can..." statements, drawn from or reasonably inferred from the objectives and tasks in the source.
 - "strategy" should name the actual teaching approach used in the source (e.g. modelling, guided elicitation, cold-calling, think-aloud annotation), not a generic guess.
-- "differentiation" fields (support/core/challenge) should reflect any tiered guidance actually present in the source; leave empty if none is present.
 
 Respond with ONLY a JSON object, no other text, matching this shape:
-{"topic": "", "resources": "", "strategy": "", "objectives": "", "criteria": "", "differentiation": {"support": "", "core": "", "challenge": ""}}
+{"topic": "", "resources": "", "strategy": "", "objectives": "", "criteria": ""}
 
 SOURCE TEXT:
 """
