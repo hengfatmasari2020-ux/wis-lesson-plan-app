@@ -36,6 +36,7 @@ function headingCell(text, width, opts = {}) {
 
 function cell(text, width, opts = {}) {
   const lines = Array.isArray(text) ? text : [text];
+  const bullet = lines.length > 1; // single-value cells stay plain; lists get bullets
   return new TableCell({
     width: { size: width, type: WidthType.DXA },
     columnSpan: opts.span,
@@ -43,9 +44,21 @@ function cell(text, width, opts = {}) {
     verticalAlign: VerticalAlign.CENTER,
     children: lines.map((l, i) => new Paragraph({
       spacing: { after: 60 },
-      children: [new TextRun({ text: l, bold: !!opts.bold && i === 0 })]
+      children: [new TextRun({ text: bullet ? `• ${l}` : l, bold: !!opts.bold && i === 0 })]
     }))
   });
+}
+
+// Splits free text a teacher typed (support/core/challenge notes) into bullet
+// lines: respects existing newlines if present, otherwise splits on sentences.
+function toBulletLines(text) {
+  if (!text) return [];
+  const byLine = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  if (byLine.length > 1) return byLine;
+  return text
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 function labelValueCell(label, value, width, opts = {}) {
@@ -144,19 +157,22 @@ function buildProceduralTable(framework, inputs) {
 function buildDifferentiationTable(differentiation) {
   const W = [3860, 11578];
   const tiers = [
-    ["Tier 1: Emerging / Support", differentiation.support || "No support-tier notes supplied."],
-    ["Tier 2: Target / Core", differentiation.core || "No core-tier notes supplied."],
-    ["Tier 3: Extension / Advanced", differentiation.challenge || "No extension-tier notes supplied."]
+    ["Tier 1: Emerging / Support", differentiation.support],
+    ["Tier 2: Target / Core", differentiation.core],
+    ["Tier 3: Extension / Advanced", differentiation.challenge]
   ];
   return new Table({
     width: { size: TABLE_WIDTH, type: WidthType.DXA },
     columnWidths: W,
-    rows: tiers.map(([label, text], i) => new TableRow({
-      children: [
-        cell(label, W[0], { shade: i % 2 === 1, bold: true }),
-        cell(text, W[1], { shade: i % 2 === 1 })
-      ]
-    }))
+    rows: tiers.map(([label, text], i) => {
+      const lines = toBulletLines(text);
+      return new TableRow({
+        children: [
+          cell(label, W[0], { shade: i % 2 === 1, bold: true }),
+          cell(lines.length ? lines : ["No notes supplied."], W[1], { shade: i % 2 === 1 })
+        ]
+      });
+    })
   });
 }
 
@@ -252,7 +268,7 @@ function generateLessonPlanDocx(inputs) {
     styles: {
       default: {
         document: {
-          run: { font: "Calibri", size: 24 } // 12pt body text throughout
+          run: { font: "Calibri", size: 20 } // 10pt body text throughout (title stays at its own 18pt)
         }
       }
     },
