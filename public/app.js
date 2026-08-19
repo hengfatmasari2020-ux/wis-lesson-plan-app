@@ -5,6 +5,18 @@ const strategyInput = document.getElementById("strategy");
 const frameworkNote = document.getElementById("framework-note");
 const errorsBox = document.getElementById("form-errors");
 const submitBtn = document.getElementById("submit-btn");
+const resourcesTextarea = document.getElementById("resources");
+const resourceFilesInput = document.getElementById("resource-files");
+
+resourceFilesInput.addEventListener("change", () => {
+  const names = Array.from(resourceFilesInput.files).map((f) => f.name);
+  if (!names.length) return;
+  const line = `Attached files: ${names.join(", ")}`;
+  resourcesTextarea.value = resourcesTextarea.value.trim()
+    ? `${resourcesTextarea.value.trim()}\n${line}`
+    : line;
+  resourceFilesInput.value = "";
+});
 
 gradeSelect.addEventListener("change", async () => {
   const grade = gradeSelect.value;

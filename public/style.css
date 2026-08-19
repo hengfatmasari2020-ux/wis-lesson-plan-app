@@ -103,6 +103,25 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.25);
 }
 
+.file-label {
+  margin-top: 12px;
+  font-weight: 500;
+  font-size: 0.82rem;
+  color: var(--grey);
+}
+
+input[type="file"] {
+  width: 100%;
+  font-size: 0.85rem;
+  color: var(--navy);
+}
+
+.file-hint {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+  color: var(--grey);
+}
+
 textarea { resize: vertical; }
 
 .diff-group {
